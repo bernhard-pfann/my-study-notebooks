@@ -253,8 +253,27 @@ def pegasos(feature_matrix, labels, T, L):
     number with the value of the theta_0, the offset classification
     parameter, found after T iterations through the feature matrix.
     """
-    # Your code here
-    raise NotImplementedError
+    theta = np.zeros(feature_matrix.shape[1])
+    theta_0 = 0
+    counter = 1
+
+    for t in range(T):
+        for i in get_order(feature_matrix.shape[0]):
+
+            eta = 1/np.sqrt(counter)
+
+            theta, theta_0 = pegasos_single_step_update(
+                feature_vector=feature_matrix[i],
+                label=labels[i],
+                L=L,
+                eta=eta,
+                current_theta=theta,
+                current_theta_0=theta_0
+            )
+
+            counter += 1
+
+    return  (theta, theta_0)
 
 # Part II
 
