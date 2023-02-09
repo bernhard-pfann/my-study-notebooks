@@ -212,7 +212,7 @@ def pegasos_single_step_update(
     real valued number with the value of theta_0 after the current updated has
     completed.
     """
-    z = label * np.inner(current_theta, feature_vector + current_theta_0)
+    z = label * (np.inner(current_theta, feature_vector) + current_theta_0)
 
     if z <= 1:
         theta = (1 - eta*L) * current_theta + eta*label*feature_vector
@@ -286,7 +286,6 @@ def classify(feature_matrix, theta, theta_0):
     Args:
         feature_matrix - A numpy matrix describing the given data. Each row
             represents a single data point.
-                theta - A numpy array describing the linear classifier.
         theta - A numpy array describing the linear classifier.
         theta_0 - A real valued number representing the offset parameter.
 
@@ -295,9 +294,9 @@ def classify(feature_matrix, theta, theta_0):
     given theta and theta_0. If a prediction is GREATER THAN zero, it should
     be considered a positive classification.
     """
-    # Your code here
-    raise NotImplementedError
-
+    z = np.inner(feature_matrix, theta) + theta_0
+    z = np.where(z>0, 1, -1)
+    return z
 
 def classifier_accuracy(
         classifier,
@@ -331,9 +330,25 @@ def classifier_accuracy(
     trained classifier on the training data and the second element is the
     accuracy of the trained classifier on the validation data.
     """
-    # Your code here
-    raise NotImplementedError
+    
+    theta, theta_0 = classifier(feature_matrix=train_feature_matrix, labels=train_labels, **kwargs)
 
+    train_preds = classify(
+        feature_matrix=train_feature_matrix, 
+        theta=theta, 
+        theta_0=theta_0
+    )
+
+    val_preds = classify(
+        feature_matrix=val_feature_matrix, 
+        theta=theta, 
+        theta_0=theta_0
+    )
+
+    train_accuracy = accuracy(preds=train_preds, targets=train_labels)
+    val_accuracy = accuracy(preds=val_preds, targets=val_labels)
+
+    return (train_accuracy, val_accuracy)
 
 def extract_words(input_string):
     """
@@ -355,13 +370,16 @@ def bag_of_words(texts):
 
     Feel free to change this code as guided by Problem 9
     """
-    # Your code here
+    
+    stopwords = open("stopwords.txt", "r").read().split("\n")
+
     dictionary = {} # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
         for word in word_list:
-            if word not in dictionary:
+            if (word not in dictionary) and (word not in stopwords):
                 dictionary[word] = len(dictionary)
+
     return dictionary
 
 
@@ -375,8 +393,6 @@ def extract_bow_feature_vectors(reviews, dictionary):
 
     Feel free to change this code as guided by Problem 9
     """
-    # Your code here
-
     num_reviews = len(reviews)
     feature_matrix = np.zeros([num_reviews, len(dictionary)])
 
@@ -384,7 +400,8 @@ def extract_bow_feature_vectors(reviews, dictionary):
         word_list = extract_words(text)
         for word in word_list:
             if word in dictionary:
-                feature_matrix[i, dictionary[word]] = 1
+                feature_matrix[i, dictionary[word]] = word_list.count(word)
+    
     return feature_matrix
 
 
