@@ -54,8 +54,18 @@ def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
     Returns
         c - the cost value (scalar)
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    n = len(X)
+    softmax_loss = 0
+
+    for x,k in zip(X,Y): 
+        softmax = compute_probabilities(X=x, theta=theta, temp_parameter=temp_parameter)
+        softmax_loss += np.log(softmax[k])
+
+    regularization = np.sum(np.square(theta))*lambda_factor/2
+    total_loss = -(1/n)* softmax_loss + regularization
+
+    return total_loss
+
 
 def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_parameter):
     """
@@ -74,8 +84,8 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
     Returns:
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    
+    import pdb; pdb.set_trace()
 
 def update_y(train_y, test_y):
     """
