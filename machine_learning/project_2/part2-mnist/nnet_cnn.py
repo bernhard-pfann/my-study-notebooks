@@ -53,9 +53,9 @@ def main():
         nn.MaxPool2d((2, 2)),
               
         nn.Flatten(),
-        nn.Linear(1600, 1600),
+        nn.Linear(1600, 128),
         nn.Dropout(0.5),
-        nn.Linear(1600 , 10),
+        nn.Linear(128 , 10),
     )
     ##################################
 
