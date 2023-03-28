@@ -19,11 +19,29 @@ class CNN(nn.Module):
 
     def __init__(self, input_dimension):
         super(CNN, self).__init__()
-        # TODO initialize model layers here
+        self.convolution = nn.Conv2d(1, 32, (3,3))
+        self.convolution_2 = nn.Conv2d(32, 64, (3,3))
+        self.pool = nn.MaxPool2d((2, 2))
+        self.flatten = nn.Flatten()
+        self.output_layer = nn.Linear(18*11*64, 20)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(p=0.5)
 
     def forward(self, x):
 
-        # TODO use model layers to predict the two digits
+        x = self.convolution(x)
+        x = self.pool(x)
+        x = self.relu(x)
+
+        x = self.convolution_2(x)
+        x = self.relu(x)
+
+        x = self.flatten(x)
+        x = self.output_layer(x)
+        x = self.dropout(x)
+
+        out_first_digit = x[:,:10]
+        out_second_digit = x[:,10:]
 
         return out_first_digit, out_second_digit
 
