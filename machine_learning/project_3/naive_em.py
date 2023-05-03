@@ -112,7 +112,3 @@ def run(X: np.ndarray, mixture: GaussianMixture,
         condition = (new_log_lh - old_log_lh) > 1e-6 * np.abs(new_log_lh)
 
     return mixture, new_log_lh
-
-
-
-
